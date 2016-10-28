@@ -23,6 +23,7 @@ class Handler extends ExceptionHandler
         ValidationException::class,
     ];
 
+
     /**
      * Report or log an exception.
      *
@@ -33,9 +34,14 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+        // 因为该文件同样在命名空间 App\Exceptions 内，所以不用再说明完整的命名空间
+        if ($e instanceof InvalidArgumentsException) {
+            // 可以在这里进一步分析异常所带参数，对异常进行上报或者取消上报
+            // 或者进一步修饰异常，或者上报不同类型的异常
+        }
         parent::report($e);
     }
-
+    
     /**
      * Render an exception into an HTTP response.
      *
@@ -45,6 +51,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($e instanceof InvalidArgumentsException) {
+            // 可以对特定的异常进行捕捉然后返回/渲染不同的错误页面
+            return response()->json(['status' => 'error', 'info' => 'Invalid Argument(s)!'], 400);
+        }
+        // 使用默认的渲染方法
         return parent::render($request, $e);
     }
 }
